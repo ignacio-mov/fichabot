@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 
 from fichabot import bot, app
 from fichabot.backends.database import User
-from fichabot.backends.openhr import URL_FICHAJE_MANUAL
+from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje
 from fichabot.backends.scheduler import scheduler
 from fichabot.config import JORNADA
 from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, CALLBACK_FICHAR, CALLBACK_DESCANSAR, ENDPOINT_FICHAJE
@@ -108,7 +108,7 @@ def fichaje_automatico(chat_id, message_id):
     """Realiza un fichaje automático"""
 
     user = User.get(chat_id)
-    r = fichar(user.name, user.password)
+    r = send_fichaje(user.name, user.password)
     if message_id:
         bot.bot.edit_message_text(confirmacion_fichaje(), reply_markup=None, chat_id=chat_id, message_id=message_id)
     else:
