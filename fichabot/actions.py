@@ -142,7 +142,5 @@ def callback_fichar(update: Update, _):
 
     chat_id = update.callback_query.message.chat.id
     message_id = update.callback_query.message.message_id
-    if message_id:
-        bot.bot.edit_message_text(confirmacion_fichaje(), reply_markup=None, chat_id=chat_id, message_id=message_id)
-    else:
-        bot.bot.send_message(chat_id, confirmacion_fichaje())
+
+    fichaje_automatico(chat_id, message_id)
