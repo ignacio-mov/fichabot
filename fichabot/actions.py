@@ -11,7 +11,8 @@ from fichabot.backends.database import User
 from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje
 from fichabot.backends.scheduler import scheduler
 from fichabot.config import JORNADA
-from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, CALLBACK_FICHAR, CALLBACK_DESCANSAR, ENDPOINT_FICHAJE
+from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, CALLBACK_INICIO, CALLBACK_DESCANSAR, ENDPOINT_FICHAJE, \
+    CALLBACK_FICHAR
 from fichabot.utils import build_url_fichaje, confirmacion_fichaje, dentro_de, format_time
 
 
@@ -25,7 +26,7 @@ def send_question(chat_id):
 
     # Envía confirmación de fichaje automático o el enlace para fichar
     if User.get(chat_id):
-        payload_fichaje = {'callback_data': CALLBACK_FICHAR}
+        payload_fichaje = {'callback_data': CALLBACK_INICIO}
     else:
         payload_fichaje = {'url': build_url_fichaje(chat_id, message_id, inicio=True)}
 
@@ -41,7 +42,7 @@ def send_question(chat_id):
 
 
 @bot.callback(CALLBACK_DESCANSAR)
-def descansar(update: Update):
+def descansar(update: Update, _):
     """Limpia el mensaje para fichar"""
     query = update.callback_query
     bot.bot.answer_callback_query(query.id, text="Procesando solicitud")
@@ -51,8 +52,8 @@ def descansar(update: Update):
     return None
 
 
-@bot.callback(CALLBACK_FICHAR)
-def callback_iniciar_jornada(update: Update):
+@bot.callback(CALLBACK_INICIO)
+def callback_iniciar_jornada(update: Update, _):
     """ Realiza el fichaje y programa el fin de la jornada"""
     query = update.callback_query
     bot.bot.answer_callback_query(query.id, text="Procesando solicitud")
@@ -98,7 +99,8 @@ def fichar(chat_id, message_id=None):
 
     Puede ser como respuesta a un mensaje previo o como un nuevo mensaje
     """
-    if User.get(chat_id):
+    user = User.get(chat_id)
+    if user and user.auto:
         fichaje_automatico(chat_id, message_id)
     else:
         fichaje_manual(chat_id, message_id)
@@ -115,7 +117,7 @@ def fichaje_automatico(chat_id, message_id):
         bot.bot.send_message(chat_id, confirmacion_fichaje())
 
 
-def fichaje_manual(chat_id, message_id=None, text='Pulsa para ir a la web de fichaje'):
+def fichaje_manual(chat_id, message_id=None, text='Pulsa para fichar'):
     """Envía el mensaje con el enlace para fichar"""
 
     # Se envía el mensaje
@@ -124,5 +126,23 @@ def fichaje_manual(chat_id, message_id=None, text='Pulsa para ir a la web de fic
         message_id = mensaje.message_id
 
     # Y se adjunta el enlace para fichar
-    teclado = InlineKeyboardMarkup([[InlineKeyboardButton('Fichar', url=build_url_fichaje(chat_id, message_id))]])
-    bot.bot.edit_message_reply_markup(text, chat_id=chat_id, message_id=message_id, reply_markup=teclado)
+    if User.get(chat_id):
+        payload_fichaje = {'callback_data': CALLBACK_FICHAR}
+    else:
+        payload_fichaje = {'url': build_url_fichaje(chat_id, message_id, inicio=False)}
+    teclado = InlineKeyboardMarkup([[InlineKeyboardButton('Fichar', **payload_fichaje)]])
+    bot.bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=teclado)
+
+
+@bot.callback(CALLBACK_FICHAR)
+def callback_fichar(update: Update, _):
+
+    query = update.callback_query
+    bot.bot.answer_callback_query(query.id, text="Procesando solicitud")
+
+    chat_id = update.callback_query.message.chat.id
+    message_id = update.callback_query.message.message_id
+    if message_id:
+        bot.bot.edit_message_text(confirmacion_fichaje(), reply_markup=None, chat_id=chat_id, message_id=message_id)
+    else:
+        bot.bot.send_message(chat_id, confirmacion_fichaje())

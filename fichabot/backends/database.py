@@ -10,13 +10,18 @@ class User(db.Model):
     id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(30))
     password = db.Column(db.String)
+    last_proyect = db.Column(db.String)
+    last_proyect_id = db.Column(db.String)
+    auto = db.Column(db.Boolean)
 
     def __repr__(self):
         return str(self.as_dict())
 
     def as_dict(self):
         password = ''.join('*' for _ in self.password)
-        return {'user': {'id': self.id, 'name': self.name, 'password': password}}
+        return {'user': {'id': self.id, 'name': self.name, 'password': password, 'auto': self.auto,
+                         'last_project': self.last_proyect, 'last_project_id': self.last_proyect_id}
+                }
 
     def save(self):
         db.session.add(self)

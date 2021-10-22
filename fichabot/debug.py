@@ -1,7 +1,7 @@
 from pytgbot.api_types.receivable.updates import Update
 
 from fichabot import app, bot
-from fichabot.actions import iniciar_jornada, fichar, programar_fin_jornada
+from fichabot.actions import fichar, send_question
 from fichabot.backends.database import User, db
 from fichabot.backends.scheduler import scheduler
 from fichabot.constants import COMMAND_JORNADA, COMMAND_FICHA
@@ -27,8 +27,7 @@ def init_tables():
 @bot.command(COMMAND_JORNADA)
 def forzar_nuevo_dia(update: Update, *_):
     """Fuerza el envío de un mensaje para fichar el día entero"""
-    fichar(update.message.chat.id)
-    programar_fin_jornada(update.message.chat.id)
+    send_question(update.message.chat.id)
 
 
 @bot.command(COMMAND_FICHA)
