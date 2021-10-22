@@ -18,6 +18,7 @@ def get_proyectos(user, password):
     r = requests.get(url, auth=(user, password))
     if not r.ok:
         raise ValueError('Invalid User-password')
+    return r.json()
 
 
 def imputado(user, password):

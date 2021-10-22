@@ -8,11 +8,11 @@ from werkzeug.utils import redirect
 
 from fichabot import bot, app
 from fichabot.backends.database import User
-from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje
+from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje, get_proyectos
 from fichabot.backends.scheduler import scheduler
 from fichabot.config import JORNADA
-from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, CALLBACK_INICIO, CALLBACK_DESCANSAR, ENDPOINT_FICHAJE, \
-    CALLBACK_FICHAR
+from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, ENDPOINT_FICHAJE,\
+    CALLBACK_INICIO, CALLBACK_DESCANSAR, CALLBACK_FICHAR
 from fichabot.utils import build_url_fichaje, confirmacion_fichaje, dentro_de, format_time
 
 
@@ -71,11 +71,13 @@ def fichar_url():
     message_id = int(request.args.get('message_id'))
     chat_id = request.args.get('chat_id')
 
+    bot.bot.edit_message_text(confirmacion_fichaje(), reply_markup=None, chat_id=chat_id, message_id=message_id)
+
     if request.args.get('inicio'):
         programar_fin_jornada(chat_id)
         app.logger.info('programado normal')
-
-    bot.bot.edit_message_text(confirmacion_fichaje(), reply_markup=None, chat_id=chat_id, message_id=message_id)
+    else:
+        preguntar_imputacion(chat_id)
 
     return redirect(URL_FICHAJE_MANUAL)
 
@@ -102,22 +104,23 @@ def fichar(chat_id, message_id=None):
     user = User.get(chat_id)
     if user and user.auto:
         fichaje_automatico(chat_id, message_id)
+        preguntar_imputacion(chat_id)
     else:
-        fichaje_manual(chat_id, message_id)
+        confirma_fin_jornada(chat_id, message_id)
 
 
 def fichaje_automatico(chat_id, message_id):
     """Realiza un fichaje automático"""
 
     user = User.get(chat_id)
-    r = send_fichaje(user.name, user.password)
+    send_fichaje(user.name, user.password)
     if message_id:
         bot.bot.edit_message_text(confirmacion_fichaje(), reply_markup=None, chat_id=chat_id, message_id=message_id)
     else:
         bot.bot.send_message(chat_id, confirmacion_fichaje())
 
 
-def fichaje_manual(chat_id, message_id=None, text='Pulsa para fichar'):
+def confirma_fin_jornada(chat_id, message_id=None, text='Pulsa para fichar'):
     """Envía el mensaje con el enlace para fichar"""
 
     # Se envía el mensaje
@@ -135,7 +138,7 @@ def fichaje_manual(chat_id, message_id=None, text='Pulsa para fichar'):
 
 
 @bot.callback(CALLBACK_FICHAR)
-def callback_fichar(update: Update, _):
+def callback_fin_jornada(update: Update, _):
 
     query = update.callback_query
     bot.bot.answer_callback_query(query.id, text="Procesando solicitud")
@@ -144,3 +147,9 @@ def callback_fichar(update: Update, _):
     message_id = update.callback_query.message.message_id
 
     fichaje_automatico(chat_id, message_id)
+    preguntar_imputacion(chat_id)
+
+
+def preguntar_imputacion(chat_id):
+    user = User.get(chat_id)
+    proyectos = get_proyectos(user.name, user.password)
