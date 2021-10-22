@@ -11,3 +11,24 @@ def send_fichaje(user, password):
     r = requests.post(url, auth=(user, password))
     if not r.ok:
         raise ValueError('Invalid User-password')
+
+
+def get_proyectos(user, password):
+    url = f'{URL_FICHAJE}/proyectos'
+    r = requests.get(url, auth=(user, password))
+    if not r.ok:
+        raise ValueError('Invalid User-password')
+
+
+def imputado(user, password):
+    url = f'{URL_FICHAJE}/imputado'
+    r = requests.get(url, auth=(user, password))
+    if not r.ok:
+        raise ValueError('Invalid User-password')
+
+
+def imputa(user, password, proyecto):
+    url = f'{URL_FICHAJE}/imputacion'
+    r = requests.post(url, auth=(user, password), data={'proyecto': proyecto})
+    if not r.ok:
+        raise ValueError('Invalid User-password')
