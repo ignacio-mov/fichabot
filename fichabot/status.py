@@ -4,15 +4,19 @@ from teleflask.messages import TextMessage
 from fichabot.backends.scheduler import scheduler
 from fichabot.backends.database import User
 from fichabot import bot
-from fichabot.config import INICIO_JORNADA
+from fichabot.config import INICIO_JORNADA, START_PASSWORD
 from fichabot.constants import COMMAND_START, COMMAND_STOP, COMMAND_STATUS, COMMAND_AUTO, ENDPOINT_JORNADA, \
     COMMAND_LOGIN
 
 
 @bot.command(COMMAND_START)
-def start(update: Update, _):
+def start(update: Update, password:str):
     """Da la bienvenida a un usuario y lo registra en la app"""
     chat_id = update.message.chat.id
+
+    if password != START_PASSWORD:
+        return "F**k you!"
+
     scheduler.add_job(f'buenos_dias_{chat_id}', replace_existing=True, endpoint=f'{ENDPOINT_JORNADA}/{chat_id}',
                       trigger='cron', **INICIO_JORNADA)
 

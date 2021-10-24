@@ -16,6 +16,7 @@ ENV USER_DB="sqlite:///$data_path/users.db"
 ENV TIMEZONE="Europe/Madrid" LOG_LEVEL="INFO"
 # Estas variables deben sustituirse para que funcione la app
 ENV DOMAIN_NAME=example.com TOKEN=124-ABCD-678-EFGH
+ENV START_PASSWORD="fichabot"
 ENV INTERNAL_NAME=http://fichabot:8080 SCHEDULER_URL=http://scheduler:8080 FICHAJE=http://openhr:8080
 
 CMD ["uwsgi", "uwsgi.ini"]
