@@ -13,7 +13,7 @@ from fichabot.constants import COMMAND_START, COMMAND_STOP, COMMAND_STATUS, COMM
 def start(update: Update, _):
     """Da la bienvenida a un usuario y lo registra en la app"""
     chat_id = update.message.chat.id
-    scheduler.add_job(f'buenos_dias_{chat_id}', replace_existing=True, endpoint=f'{ENDPOINT_JORNADA}/{chat_idx}',
+    scheduler.add_job(f'buenos_dias_{chat_id}', replace_existing=True, endpoint=f'{ENDPOINT_JORNADA}/{chat_id}',
                       trigger='cron', **INICIO_JORNADA)
 
     mensaje = f"""
