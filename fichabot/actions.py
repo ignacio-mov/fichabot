@@ -8,11 +8,11 @@ from werkzeug.utils import redirect
 
 from fichabot import bot, app
 from fichabot.backends.database import User
-from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje, get_proyectos
+from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje, get_proyectos, imputa
 from fichabot.backends.scheduler import scheduler
 from fichabot.config import JORNADA
-from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, ENDPOINT_FICHAJE,\
-    CALLBACK_INICIO, CALLBACK_DESCANSAR, CALLBACK_FICHAR
+from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, ENDPOINT_FICHAJE, \
+    CALLBACK_INICIO, CALLBACK_DESCANSAR, CALLBACK_FICHAR, CALLBACK_IMPUTAR
 from fichabot.utils import build_url_fichaje, confirmacion_fichaje, dentro_de, format_time
 
 
@@ -151,5 +151,31 @@ def callback_fin_jornada(update: Update, _):
 
 
 def preguntar_imputacion(chat_id):
+    # TODO comprobar usuario validado
+    # TODO comprobar si ya ha fichado
+    # TODO comprobar ultimo proyecto
+    # TODO posibilidad de no imputar
     user = User.get(chat_id)
-    proyectos = get_proyectos(user.name, user.password)
+    proyectos = get_proyectos(user.name, user.password)['proyectos']
+    botones = [[InlineKeyboardButton(p['nombre'], callback_data=f"{CALLBACK_IMPUTAR} {p['nombre']} {p['valor']}")]
+               for p in proyectos]
+    teclado = InlineKeyboardMarkup(botones)
+    message = bot.bot.send_message(chat_id, 'Elige proyecto', reply_markup=teclado)
+    return
+
+
+@bot.callback(CALLBACK_IMPUTAR)
+def confirma_imputacion(update: Update, args: str):
+
+    query = update.callback_query
+    bot.bot.answer_callback_query(query.id, text="Procesando solicitud")
+
+    chat_id = update.callback_query.message.chat.id
+    message_id = update.callback_query.message.message_id
+
+    nombre, valor = args.split(' ')
+
+    user = User.get(chat_id)
+    imputa(user.name, user.password, valor)
+    bot.bot.edit_message_text(f'Imputado en el proyecto {nombre}', reply_markup=None,
+                              chat_id=chat_id, message_id=message_id)

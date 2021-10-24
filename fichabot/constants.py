@@ -1,6 +1,7 @@
 CALLBACK_INICIO = 'inicio_jornada'
 CALLBACK_DESCANSAR = 'descansar'
 CALLBACK_FICHAR = 'fichar'
+CALLBACK_IMPUTAR = 'imputar'
 
 ENDPOINT_FICHAJE = '/fichar_redirect'
 ENDPOINT_JORNADA = '/jornada'
