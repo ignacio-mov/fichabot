@@ -1,10 +1,10 @@
 from pytgbot.api_types.receivable.updates import Update
 
 from fichabot import app, bot
-from fichabot.actions import fichar, send_question
+from fichabot.actions import fichar, send_question, preguntar_imputacion
 from fichabot.backends.database import User, db
 from fichabot.backends.scheduler import scheduler
-from fichabot.constants import COMMAND_JORNADA, COMMAND_FICHA
+from fichabot.constants import COMMAND_JORNADA, COMMAND_FICHA, COMMAND_IMPUTA
 
 
 @app.route('/users')
@@ -34,3 +34,9 @@ def forzar_nuevo_dia(update: Update, *_):
 def forzar_fichaje(update: Update, _: str):
     """Fuerza un fichaje individual"""
     fichar(update.message.chat.id)
+
+
+@bot.command(COMMAND_IMPUTA)
+def forzar_imputacion(update: Update, _: str):
+    """Fuerza el envío de un mensaje para imputar el día entero"""
+    preguntar_imputacion(update.message.chat.id)
