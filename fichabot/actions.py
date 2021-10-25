@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 
 from fichabot import bot, app
 from fichabot.backends.database import User
-from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje, get_proyectos, imputa
+from fichabot.backends.openhr import URL_FICHAJE_MANUAL, send_fichaje, get_proyectos, imputa, imputado
 from fichabot.backends.scheduler import scheduler
 from fichabot.config import JORNADA
 from fichabot.constants import ENDPOINT_FICHAR, ENDPOINT_JORNADA, ENDPOINT_FICHAJE, \
@@ -151,8 +151,13 @@ def callback_fin_jornada(update: Update, _):
 
 
 def preguntar_imputacion(chat_id):
-    # TODO comprobar usuario validado
-    # TODO comprobar si ya ha fichado
+    user = User.get(chat_id)
+    # comprobar usuario validado
+    if not user:
+        return
+    # comprobar si ya ha imputado
+    if imputado(user.name, user.password):
+        return
     # TODO comprobar ultimo proyecto
     # TODO posibilidad de no imputar
     user = User.get(chat_id)
