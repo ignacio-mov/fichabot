@@ -157,7 +157,7 @@ def preguntar_imputacion(chat_id):
     # TODO posibilidad de no imputar
     user = User.get(chat_id)
     proyectos = get_proyectos(user.name, user.password)['proyectos']
-    botones = [[InlineKeyboardButton(p['nombre'], callback_data=f"{CALLBACK_IMPUTAR} {p['nombre']} {p['valor']}")]
+    botones = [[InlineKeyboardButton(p['nombre'], callback_data=f"{CALLBACK_IMPUTAR} {p['nombre']}#{p['valor']}")]
                for p in proyectos]
     teclado = InlineKeyboardMarkup(botones)
     message = bot.bot.send_message(chat_id, 'Elige proyecto', reply_markup=teclado)
@@ -173,7 +173,7 @@ def confirma_imputacion(update: Update, args: str):
     chat_id = update.callback_query.message.chat.id
     message_id = update.callback_query.message.message_id
 
-    nombre, valor = args.split(' ')
+    nombre, valor = args.split('#')
 
     user = User.get(chat_id)
     imputa(user.name, user.password, valor)

@@ -125,9 +125,9 @@ import fichabot            >>> @app.callback("foo")
         assert isinstance(update, Update)
         try:
             aux = update.callback_query.data.split(' ', maxsplit=1)
-            callback = aux.pop()
+            callback = aux.pop(0)
             text = '' if not aux else aux[0]
-            logger.debug(f'Llamado callback {callback}')
+            logger.debug(f'Recibido callback {callback}:{text}')
         except Exception:
             callback = None
             text = None
