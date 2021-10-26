@@ -32,7 +32,8 @@ def imputaciones(user, password):
     r = requests.get(url, auth=(user, password))
     if not r.ok:
         raise ValueError('Invalid User-password')
-    return r.json()['imputado']
+    imputaciones = r.json()['imputado']
+    return {int(dia): valor for dia, valor in imputaciones.items()}
 
 
 def imputa(user, password, proyecto):
