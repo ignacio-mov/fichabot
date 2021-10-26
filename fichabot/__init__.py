@@ -11,7 +11,7 @@ bot = CallbackBot(TOKEN, app=app, hostname=DOMAIN_NAME)
 
 # inicializa la app de flask, bot, BBDD y scheduler
 # Añadimos las acciones y rutas a la app al importarlas
-from fichabot import status, debug, actions
+from fichabot import status, debug, fichaje, imputacion
 
 db.init_app(app)
 

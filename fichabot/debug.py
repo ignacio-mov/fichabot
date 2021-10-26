@@ -1,7 +1,8 @@
 from pytgbot.api_types.receivable.updates import Update
 
 from fichabot import app, bot
-from fichabot.actions import fichar, send_question, preguntar_imputacion
+from fichabot.fichaje import fichar, send_question
+from fichabot.imputacion import preguntar_imputacion
 from fichabot.backends.database import User, db
 from fichabot.backends.scheduler import scheduler
 from fichabot.constants import COMMAND_JORNADA, COMMAND_FICHA, COMMAND_IMPUTA
