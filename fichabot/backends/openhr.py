@@ -14,7 +14,7 @@ def send_fichaje(user, password):
         raise ValueError('Invalid User-password')
 
 
-def get_proyectos(user, password):
+def get_proyectos(user, password) -> list[dict[str, str]]:
     url = f'{URL_FICHAJE}/proyectos'
     r = requests.get(url, auth=(user, password))
     if not r.ok:
@@ -23,11 +23,11 @@ def get_proyectos(user, password):
     return r.json()['proyectos']
 
 
-def imputado(user, password):
+def imputado(user, password) -> bool:
     return imputaciones(user, password)[date.today().day]
 
 
-def imputaciones(user, password):
+def imputaciones(user, password) -> dict[int, bool]:
     url = f'{URL_FICHAJE}/imputaciones'
     r = requests.get(url, auth=(user, password))
     if not r.ok:

@@ -8,9 +8,8 @@ from fichabot.constants import CALLBACK_PROYECTOS, CALLBACK_NO_IMPUTAR, CALLBACK
 
 
 def preguntar_imputacion(chat_id):
-    user = User.get(chat_id)
     # comprobar usuario validado
-    if not user:
+    if not (user := User.get(chat_id)):
         return
     # comprobar si ya ha imputado
     if imputado(user.name, user.password):
