@@ -15,8 +15,8 @@ def preguntar_imputacion(chat_id):
     # comprobar si ya ha imputado
     if imputado(user.name, user.password):
         return
-    botones = [[InlineKeyboardButton('Ver proyectos', callback_data=f"{CALLBACK_PROYECTOS}")],
-               [InlineKeyboardButton('No imputar', callback_data=f"{CALLBACK_NO_IMPUTAR}")]]
+    botones = [[InlineKeyboardButton('Ver proyectos', callback_data=f"{CALLBACK_PROYECTOS}"),
+               InlineKeyboardButton('No imputar', callback_data=f"{CALLBACK_NO_IMPUTAR}")]]
 
     if user.last_proyect and user.last_proyect_id:
         callback_last_project = f"{CALLBACK_IMPUTAR} {user.last_proyect} {user.last_proyect_id}"
@@ -78,3 +78,4 @@ def confirma_imputacion(update: Update, args: str):
     user.last_proyect = nombre
     user.last_proyect_id = valor
     user.save()
+

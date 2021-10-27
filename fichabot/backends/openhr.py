@@ -24,7 +24,7 @@ def get_proyectos(user, password):
 
 
 def imputado(user, password):
-    return imputaciones(user, password)[date.today().day]
+    return imputaciones(user, password)[str(date.today().day)]
 
 
 def imputaciones(user, password):
