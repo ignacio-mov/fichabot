@@ -1,9 +1,13 @@
+import calendar
+from datetime import date
+from functools import partial
+
 from pytgbot.api_types.receivable.updates import Update
 from pytgbot.api_types.sendable.reply_markup import InlineKeyboardButton, InlineKeyboardMarkup
 
 from fichabot import bot
 from fichabot.backends.database import User
-from fichabot.backends.openhr import imputado, get_proyectos, imputa
+from fichabot.backends.openhr import imputado, get_proyectos, imputa, imputaciones
 from fichabot.constants import CALLBACK_PROYECTOS, CALLBACK_NO_IMPUTAR, CALLBACK_IMPUTAR
 
 
@@ -78,4 +82,21 @@ def confirma_imputacion(update: Update, args: str):
     user.last_proyect = nombre
     user.last_proyect_id = valor
     user.save()
+
+
+@bot.command('mes')
+def imputa_mes(update: Update, _):
+
+    chat_id = update.message.chat.id
+    user = User.get(chat_id)
+
+    dict_dias = imputaciones(user.name, user.password)
+
+    d = date.today()
+    f = partial(calendar.weekday, d.year, d.month)
+    # Nos quedamos con los días de diario no imputados
+    dias = [d for d, b_value in dict_dias.items() if not b_value and f(int(d)) < 5]
+
+    for dia in dias:
+        bot.bot.send_message(chat_id, f'Tienes que imputar el día {dia}')
 

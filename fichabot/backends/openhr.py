@@ -35,8 +35,8 @@ def imputaciones(user, password):
     return r.json()['imputado']
 
 
-def imputa(user, password, proyecto):
+def imputa(user, password, proyecto, dia=None):
     url = f'{URL_FICHAJE}/imputacion'
-    r = requests.post(url, auth=(user, password), data={'proyecto': proyecto})
+    r = requests.post(url, auth=(user, password), data={'proyecto': proyecto, 'dia': dia})
     if not r.ok:
         raise ValueError('Invalid User-password')
