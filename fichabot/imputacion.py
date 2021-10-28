@@ -33,10 +33,10 @@ def imputa_mes(update: Update, _):
     if not (user := User.get(chat_id)):
         return "Usuario sin credenciales"
 
-    # Nos quedamos con los días de diario del mes en curso
+    # Nos quedamos con los días futuros del mes en curso
     hoy = date.today()
     for dia, dia_sem in Calendar().itermonthdays2(hoy.year, hoy.month):
-        if dia and dia_sem < 5:
+        if dia > hoy.day and dia_sem < 5:
             _preguntar_imputacion(user, dia)
 
 
