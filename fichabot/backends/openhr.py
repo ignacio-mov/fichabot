@@ -19,6 +19,7 @@ class Proyecto:
 
 def clear_cache():
     get_imputaciones.cache_clear()
+    get_proyectos.cache_clear()
 
 
 def send_fichaje(user: User):
@@ -28,6 +29,7 @@ def send_fichaje(user: User):
         raise ValueError('Invalid User-password')
 
 
+@cache
 def get_proyectos(user: User):
     url = f'{URL_FICHAJE}/proyectos'
     r = requests.get(url, auth=(user.name, user.password))
