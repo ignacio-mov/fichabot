@@ -1,8 +1,8 @@
+import logging
+
 from pytgbot.api_types.receivable.updates import Update
 from teleflask.server.base import TeleflaskMixinBase, TeleflaskBase
 from teleflask.server.mixins import StartupMixin, BotCommandsMixin, MessagesMixin, UpdatesMixin
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,8 @@ class BotCallbacksMixin(TeleflaskMixinBase):
         Decorator to register a command.
 
         :param callback: The command to be registered. Omit the slash.
-        :param exclusive: Stop processing the update further, so no other listenere will be called if this command triggered.
+        :param exclusive: Stop processing the update further, so no other listenere will be called if this command
+        triggered.
 
         Usage:
 import fichabot            >>> @app.on_callback("foo")
