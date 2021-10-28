@@ -14,8 +14,5 @@ LOG_LEVEL = os.environ['LOG_LEVEL']
 
 class Config:
     """App configuration."""
-    SCHEDULER_TIMEZONE = TIMEZONE
-    SCHEDULER_API_ENABLED = True
-    SCHEDULER_JOB_DEFAULTS = {'misfire_grace_time': 15 * 60}
     SQLALCHEMY_DATABASE_URI = os.environ['USER_DB']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
