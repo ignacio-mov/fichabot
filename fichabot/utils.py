@@ -1,8 +1,9 @@
-from pytgbot.api_types.receivable.updates import Message
-
 from datetime import datetime, timedelta
+from random import random
+
 from pytz import timezone
 
+from fichabot.backends.database import User
 from fichabot.config import DOMAIN_NAME, TIMEZONE
 from fichabot.constants import ENDPOINT_FICHAJE
 
@@ -18,7 +19,6 @@ def format_time(datetime_var: datetime = None) -> str:
 
 
 def build_url_fichaje(chat_id, message_id, inicio=None):
-
     url = f'https://{DOMAIN_NAME}{ENDPOINT_FICHAJE}?chat_id={chat_id}&message_id={message_id}'
     if inicio:
         url += f"&inicio={inicio}"
@@ -26,5 +26,17 @@ def build_url_fichaje(chat_id, message_id, inicio=None):
     return url
 
 
-def dentro_de(**kwargs):
+def dentro_de(*, jitter=0, **kwargs):
+    jitter_time = (random() - 0.5) * 2 * jitter
+    kwargs['seconds'] = kwargs.get('seconds', 0) + jitter_time
     return datetime.now(timezone(TIMEZONE)) + timedelta(**kwargs)
+
+
+def process_callback(update, bot):
+    query = update.callback_query
+    bot.answer_callback_query(query.id, text="Procesando solicitud")
+
+    message = query.message
+    user = User.get(message.chat.id)
+
+    return message, user

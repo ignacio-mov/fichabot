@@ -18,4 +18,3 @@ COMMAND_LOGIN = 'login'
 COMMAND_AUTO = 'auto'
 COMMAND_IMPUTA = 'imputa'
 COMMAND_CIERRE = 'cierre'
-

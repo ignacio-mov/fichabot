@@ -1,15 +1,15 @@
 from pytgbot.api_types.receivable.updates import Update
 from teleflask.messages import TextMessage
 
-from fichabot.backends.scheduler import scheduler
+from fichabot import botapp
 from fichabot.backends.database import User
-from fichabot import bot
+from fichabot.backends.scheduler import scheduler
 from fichabot.config import INICIO_JORNADA
 from fichabot.constants import COMMAND_START, COMMAND_STOP, COMMAND_STATUS, COMMAND_AUTO, ENDPOINT_JORNADA, \
     COMMAND_LOGIN
 
 
-@bot.command(COMMAND_START)
+@botapp.command(COMMAND_START)
 def start(update: Update, _):
     """Da la bienvenida a un usuario y lo registra en la app"""
     chat_id = update.message.chat.id
@@ -17,7 +17,7 @@ def start(update: Update, _):
                       trigger='cron', **INICIO_JORNADA)
 
     mensaje = f"""
-    <b>¡Hola!</b> ¡Bienvenido a @{bot.username}!
+    <b>¡Hola!</b> ¡Bienvenido a @{botapp.username}!
     
     A partir de ahora, cada mañana a las 8:00 recibirás un recordatorio para que fiches.
     Una vez fichado, recibirás otro recordatorio a las 9 horas.
@@ -27,7 +27,7 @@ def start(update: Update, _):
     return TextMessage(mensaje, parse_mode="html")
 
 
-@bot.command(COMMAND_STOP)
+@botapp.command(COMMAND_STOP)
 def stop(update: Update, _):
     """Elimina el trigger del usuario"""
     chat_id = update.message.chat.id
@@ -37,7 +37,7 @@ def stop(update: Update, _):
                        parse_mode="html")
 
 
-@bot.command(COMMAND_STATUS)
+@botapp.command(COMMAND_STATUS)
 def status(update: Update, *_):
     """Fuerza el envío de un mensaje para fichar"""
     data = {}
@@ -60,7 +60,7 @@ def status(update: Update, *_):
     return str(data)
 
 
-@bot.command(COMMAND_LOGIN)
+@botapp.command(COMMAND_LOGIN)
 def login(update: Update, text: str):
     """Da de alta un usuario para los fichaje automáticos"""
     chat_id = update.message.chat.id
@@ -81,7 +81,7 @@ def login(update: Update, text: str):
     return f"Se han guardado las credenciales del usuario. Escribe {command} sin argumentos para borrarlos"
 
 
-@bot.command(COMMAND_AUTO)
+@botapp.command(COMMAND_AUTO)
 def auto(update: Update, _):
     """Da de alta un usuario para los fichaje automáticos"""
     chat_id = update.message.chat.id
