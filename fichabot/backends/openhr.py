@@ -30,7 +30,7 @@ def send_fichaje(user: User):
 
 
 @cache
-def get_proyectos(user: User):
+def get_proyectos(user: User) -> list[dict[str, str]]:
     url = f'{URL_FICHAJE}/proyectos'
     r = requests.get(url, auth=(user.name, user.password))
     if not r.ok:
@@ -39,14 +39,13 @@ def get_proyectos(user: User):
     return [Proyecto(**data) for data in r.json()['proyectos']]
 
 
-def is_imputado(user: User, dia: int = None):
-    if dia is None:
-        dia = date.today().day
-    return get_imputaciones(user)[dia]
-
+def is_imputado(user: User, dia: int = None) -> bool:
+  if dia is None:
+      dia = date.today().day
+  return get_imputaciones(user)[dia]
 
 @cache
-def get_imputaciones(user: User):
+def get_imputaciones(user: User) -> dict[int, bool]:
     url = f'{URL_FICHAJE}/imputaciones'
     r = requests.get(url, auth=(user.name, user.password))
     if not r.ok:
