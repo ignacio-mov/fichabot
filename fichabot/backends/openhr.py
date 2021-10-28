@@ -17,6 +17,10 @@ class Proyecto:
     valor: str
 
 
+def clear_cache():
+    get_imputaciones.cache_clear()
+
+
 def send_fichaje(user: User):
     url = f'{URL_FICHAJE}/ficha'
     r = requests.post(url, auth=(user.name, user.password))
@@ -39,6 +43,7 @@ def is_imputado(user: User, dia: int = None):
     return get_imputaciones(user)[dia]
 
 
+@cache
 def get_imputaciones(user: User):
     url = f'{URL_FICHAJE}/imputaciones'
     r = requests.get(url, auth=(user.name, user.password))

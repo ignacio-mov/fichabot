@@ -12,6 +12,8 @@ from fichabot.utils import process_callback
 
 
 def preguntar_imputacion(chat_id, dia=None):
+    clear_cache()
+
     if dia is None:
         dia = date.today().day
 
@@ -70,7 +72,6 @@ def confirma_imputacion(update: Update, args: str):
     id_proy, dia = args.split('#')
 
     imputa(user, id_proy, dia=dia)
-
     botapp.bot.edit_message_text(f'Imputado el día {dia} en el proyecto {nombre_proy}', reply_markup=None,
                                  chat_id=message.chat.id, message_id=message.message_id)
 
