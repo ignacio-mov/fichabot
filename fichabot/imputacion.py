@@ -24,6 +24,22 @@ def preguntar_imputacion(chat_id, dia=None):
     _preguntar_imputacion(user, dia)
 
 
+@botapp.command(COMMAND_CIERRE)
+def imputa_mes(update: Update, _):
+    clear_cache()
+
+    chat_id = update.message.chat.id
+    # comprobar usuario validado
+    if not (user := User.get(chat_id)):
+        return "Usuario sin credenciales"
+
+    # Nos quedamos con los días de diario del mes en curso
+    hoy = date.today()
+    for dia, dia_sem in Calendar().itermonthdays2(hoy.year, hoy.month):
+        if dia and dia_sem < 5:
+            _preguntar_imputacion(user, dia)
+
+
 def _preguntar_imputacion(user, dia):
     # comprobar si ya ha imputado
     if is_imputado(user, dia):
