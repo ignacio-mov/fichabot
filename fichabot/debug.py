@@ -2,7 +2,6 @@ from pytgbot.api_types.receivable.updates import Update
 
 from fichabot import app, botapp
 from fichabot.backends.database import User, db
-from fichabot.backends.openhr import is_imputado, get_imputaciones
 from fichabot.backends.scheduler import scheduler
 from fichabot.constants import COMMAND_JORNADA, COMMAND_FICHA, COMMAND_IMPUTA
 from fichabot.fichaje import fichar, send_question
@@ -22,6 +21,11 @@ def init_tables():
     scheduler.remove_all_jobs()
 
     return {'data': [u.as_dict() for u in User.get_all()]}
+
+
+@app.route('/heartbeat')
+def heartbeat():
+    return "{'response': 'OK'}"
 
 
 # DEBUG COMMANDS
