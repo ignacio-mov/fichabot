@@ -60,6 +60,7 @@ import fichabot            >>> @app.callback("foo")
 
             If you now receiva a callback query with "foo", it will reply with "bar:hey"
 
+        :param exclusive: Stop processing after a exclusive callback
         :param callback: the data of the callback query
         """
 
