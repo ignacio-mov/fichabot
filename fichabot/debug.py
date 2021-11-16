@@ -23,11 +23,6 @@ def init_tables():
     return {'data': [u.as_dict() for u in User.get_all()]}
 
 
-@app.route('/heartbeat')
-def heartbeat():
-    return "{'response': 'OK'}"
-
-
 # DEBUG COMMANDS
 
 @botapp.command(COMMAND_JORNADA)
