@@ -1,8 +1,8 @@
+import logging
+
 from pytgbot.api_types.receivable.updates import Update
 from teleflask.server.base import TeleflaskMixinBase, TeleflaskBase
 from teleflask.server.mixins import StartupMixin, BotCommandsMixin, MessagesMixin, UpdatesMixin
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,8 @@ class BotCallbacksMixin(TeleflaskMixinBase):
         Decorator to register a command.
 
         :param callback: The command to be registered. Omit the slash.
-        :param exclusive: Stop processing the update further, so no other listenere will be called if this command triggered.
+        :param exclusive: Stop processing the update further, so no other listenere will be called if this command
+        triggered.
 
         Usage:
 import fichabot            >>> @app.on_callback("foo")
@@ -59,6 +60,7 @@ import fichabot            >>> @app.callback("foo")
 
             If you now receiva a callback query with "foo", it will reply with "bar:hey"
 
+        :param exclusive: Stop processing after a exclusive callback
         :param callback: the data of the callback query
         """
 
@@ -124,16 +126,19 @@ import fichabot            >>> @app.callback("foo")
         """
         assert isinstance(update, Update)
         try:
-            data = update.callback_query.data
-            logger.debug(f'Llamado callback {data}')
+            aux = update.callback_query.data.split(' ', maxsplit=1)
+            callback = aux.pop(0)
+            text = '' if not aux else aux[0]
+            logger.debug(f'Recibido callback {callback}:{text}')
         except Exception:
-            data = None
+            callback = None
+            text = None
 
         func = None
-        if data in self.callbacks:
-            logger.debug("Running callback {input} (no text).".format(input=data))
-            func, exclusive = self.callbacks[data]
-            self._dispatch_callback(func, update, data)
+        if callback in self.callbacks:
+            logger.debug("Running callback {input} (no text).".format(input=callback))
+            func, exclusive = self.callbacks[callback]
+            self._dispatch_callback(func, update, callback, text)
         else:
             logging.debug("No fitting registered callback function found.")
             exclusive = False  # so It won't abort.
@@ -153,9 +158,9 @@ import fichabot            >>> @app.callback("foo")
 
     # end if
 
-    def _dispatch_callback(self, func, update, callback):
+    def _dispatch_callback(self, func, update, callback, text):
         try:
-            self.process_result(update, func(update))
+            self.process_result(update, func(update, text))
         except Exception:
             logger.exception("Failed calling callback {cmd!r} ({func}):".format(cmd=callback, func=func))
         # end try
