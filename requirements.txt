@@ -11,3 +11,4 @@ flask==2.0.1
 pytgbot==5.2.1
 teleflask==1.0.1
 requests==2.25.1
+pytz==2021.3

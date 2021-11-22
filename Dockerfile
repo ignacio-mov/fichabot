@@ -1,6 +1,6 @@
-FROM python:3.10
+FROM python:3.9
 
-RUN pip install uwsgi==2.0.20
+RUN pip install uwsgi==2.0.20 --extra-index-url https://www.piwheels.org/simple
 
 EXPOSE 8080
 CMD ["uwsgi", "uwsgi.ini"]
@@ -17,6 +17,7 @@ VOLUME ["$data_path"]
 ENV USER_DB="sqlite:///$data_path/users.db"
 
 ENV TIMEZONE="Europe/Madrid" LOG_LEVEL="INFO"
+ENV INICIO_JORNADA='{"hour":7, "minute":30}'
 # Estas variables deben sustituirse para que funcione la app
 ENV DOMAIN_NAME=example.com TOKEN=124-ABCD-678-EFGH
 ENV INTERNAL_NAME=http://fichabot:8080 SCHEDULER_URL=http://scheduler:8080 FICHAJE=http://openhr:8080

@@ -19,10 +19,10 @@ def start(update: Update, _):
     mensaje = f"""
     <b>¡Hola!</b> ¡Bienvenido a @{botapp.username}!
     
-    A partir de ahora, cada mañana a las 8:00 recibirás un recordatorio para que fiches.
-    Una vez fichado, recibirás otro recordatorio a las 9 horas.
+A partir de ahora, cada mañana a las {INICIO_JORNADA['hour']}:{INICIO_JORNADA['minute']} recibirás un recordatorio para que fiches.
+Una vez fichado, recibirás otro recordatorio a las 9 horas.
     
-    Si deseas parar estos mensajes escribe /{COMMAND_STOP}"""
+Si deseas parar estos mensajes escribe /{COMMAND_STOP}"""
 
     return TextMessage(mensaje, parse_mode="html")
 
